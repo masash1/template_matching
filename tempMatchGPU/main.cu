@@ -31,14 +31,14 @@ int main(int argc, char** argv) {
 
     /* read target & template images (RGB) */
     Mat targetRGB;
-    targetRGB = imread("image2Trg.jpg", CV_LOAD_IMAGE_COLOR);
+    targetRGB = imread("image1Trg.jpg", CV_LOAD_IMAGE_COLOR);
     if (!targetRGB.data) {
         printf("No target image data\n");
         return -1;
     }
 
     Mat tempRGB;
-    tempRGB = imread("image2Tmp.jpg", CV_LOAD_IMAGE_COLOR);
+    tempRGB = imread("image1Tmp.jpg", CV_LOAD_IMAGE_COLOR);
     if (!tempRGB.data) {
         printf("No template image data\n");
         return -1;
@@ -46,24 +46,24 @@ int main(int argc, char** argv) {
 
     /* read target & template images (gray-scale) */
     Mat targetGRAY;
-    targetGRAY = imread("image2Trg.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+    targetGRAY = imread("image1Trg.jpg", CV_LOAD_IMAGE_GRAYSCALE);
     if (!targetGRAY.data) {
         printf("No target image data\n");
         return -1;
     }
 
     Mat tempGRAY;
-    tempGRAY = imread("image2Tmp.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+    tempGRAY = imread("image1Tmp.jpg", CV_LOAD_IMAGE_GRAYSCALE);
     if (!tempGRAY.data) {
         printf("No template image data\n");
         return -1;
     }
 /*
     //namedWindow("Display Image", WINDOW_AUTOSIZE );
-    imshow("targetRGB", targetRGB);
+    imshow("target", target);
 
     //namedWindow("Display Image", WINDOW_AUTOSIZE );
-    imshow("tempRGB", tempRGB);
+    imshow("temp", temp);
     waitKey(0);
 */
     /* convert uchar to double */
@@ -84,9 +84,9 @@ int main(int argc, char** argv) {
     int nElemTrg = rowsTrg * colsTrg;
     int nElemTmp = rowsTmp * colsTmp;
     int nElemRef = (rowsTrg - rowsTmp) * (colsTrg - colsTmp);
-    printf("target vector size = %d x %d\n", rowsTrg, colsTrg);
-    printf("template vector size = %d x %d\n", rowsTmp, colsTmp);
-    //printf("result vector size = %d\n", nElemRef);
+    printf("target vector size = %d\n", nElemTrg);
+    printf("template vector size = %d\n", nElemTmp);
+    printf("result vector size = %d\n", nElemRef);
 
     // allocate vectors in host memory
     size_t nBytesTrg = nElemTrg * sizeof(float);
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
     memset(pos, 0, nBytesPos);
 
     // use min function to obtain position
-    //cpuMin(hostRef, pos, rowsRef, colsRef);
+    cpuMin(hostRef, pos, rowsRef, colsRef);
 
     /* display result image with box */
 //    plotbox(targetRGB, pos, rowsTmp, colsTmp);
@@ -192,7 +192,7 @@ iStart = cpuSecond();
     
 
     // use min function to obtain position
-    //cpuMin(gpuRef, pos, rowsRef, colsRef);
+    cpuMin(gpuRef, pos, rowsRef, colsRef);
 
     /* display result image with box */
     //plotbox(targetRGB, pos, rowsTmp, colsTmp);
@@ -202,11 +202,6 @@ iStart = cpuSecond();
     free(h_template);
     free(hostRef);
     free(pos);
-
-    // release gpu memory
-    cudaFree(d_target);
-    cudaFree(d_template);
-    cudaFree(d_ref);
 
     /*** GPU process end ***/
 
@@ -255,7 +250,7 @@ void plotbox(Mat target, int *pos, const int rowsTmp, const int colsTmp) {
 void cpuMin(float *ref, int *pos, const int rowsRef, const int colsRef) {
   
      // initialize value
-     float minVal = 1.0e10f;
+     float minVal = 9999999999999.0f;
 
      for (int j = 0; j < rowsRef; j++) {
         for (int i = 0; i < colsRef; i++) {

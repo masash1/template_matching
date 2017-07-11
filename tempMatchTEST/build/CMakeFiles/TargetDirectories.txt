@@ -1,3 +1,0 @@
-/home/stu/kaneko_ws/tempMatchTEST/build/CMakeFiles/rebuild_cache.dir
-/home/stu/kaneko_ws/tempMatchTEST/build/CMakeFiles/edit_cache.dir
-/home/stu/kaneko_ws/tempMatchTEST/build/CMakeFiles/main.dir
